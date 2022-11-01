@@ -1,8 +1,7 @@
 # Load data from csv file
 
 raw_data <- read.csv("house_price.csv")
-data <- data[,c('price', 'sqft_living', 'floors', 'condition',
-                'sqft_above', 'sqft_living15')]
+data <- raw_data[,c('price', 'sqft_living', 'floors', 'condition','sqft_above', 'sqft_living15')]
 
 # Get correlation between each feature
 corr_df <- as.data.frame(cor(data, use='complete.obs'))
@@ -25,11 +24,31 @@ mv_df <- mv_df[,c('mean', 'variance')]
 # Merge 2 df above into 1
 stat_df <- merge(corr_df, mv_df, by=0, all.x=TRUE)
 
-# Graphing
-png("my_plot.png", width = 650, height = 500)
+## Graphing
+# Histogram
+png("hist_plot.png", width = 1300, height = 1000)
 par(mfrow=c(2,3))
 
 for (col in colnames(data)) {
-  hist(data[,col], labels=data[,col], xlab = col, main=col, breaks=35)
+  hist(data[,col], labels=data[,col], xlab = col, main=col, breaks=35, cex.lab=2, cex.axis=2, cex.main=3, cex.sub=2)
 }
 dev.off()
+
+# Boxplot
+png("box_plot.png", width = 1300, height = 1000)
+par(mfrow=c(2,3))
+
+for (col in colnames(data)) {
+  boxplot(data[,col], labels=data[,col], xlab = col, main=col, breaks=35, cex.lab=2, cex.axis=2, cex.main=3, cex.sub=2)
+}
+dev.off()
+
+# Pairs plot
+png("pairs_plot.png", width = 4000, height = 4000)
+
+pairs(data, cex.labels=7, pch=19, cex = 4, cex.axis = 3)
+dev.off()
+
+
+## Linear Regression
+
