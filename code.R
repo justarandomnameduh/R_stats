@@ -1,5 +1,4 @@
 # Load data from csv file
-
 raw_data <- read.csv("house_price.csv")
 data <- raw_data[,c('price', 'sqft_living', 'floors',
                     'condition','sqft_above', 'sqft_living15')]
@@ -25,6 +24,7 @@ mv_df <- mv_df[,c('mean', 'variance')]
 
 # Merge 2 df above into 1
 stat_df <- merge(corr_df, mv_df, by=0, all.x=TRUE)
+rownames(stat_df) <- stat_df$Row.names
 write.csv(stat_df, "stat_analyze.csv", row.names=TRUE)
 ## Graphing
 # Histogram
@@ -76,12 +76,9 @@ test_data <- data[-random_sample,]
 
 linreg <- lm(price ~., data = train_data)
 predictions <- predict(linreg, test_data)
-data.frame( R2 = R2(predictions, test_data$price),
+error_df <- data.frame( R2 = R2(predictions, test_data$price),
             RMSE = RMSE(predictions, test_data$price),
             MAE = MAE(predictions, test_data$price))
-coef_list <- list(linreg$coefficients)
-feature_list <- c( 'intercept', 'sqft_living', 'floors',
-                   'condition','sqft_above', 'sqft_living15')
-coef_df <- data.frame(coef_list, feature_list)
-colnames(coef_df) <- c('coefficient', 'feature')
-write.csv(coef_df, "linreg_coef.csv", row.names=TRUE)
+coef_list <- data.frame(linreg$coefficients)
+write.csv(coef_list, "linreg_coef.csv", row.names=TRUE)
+write.csv(error_df, "linreg_error.csv", row.names=TRUE)
